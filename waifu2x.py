@@ -124,36 +124,35 @@ def load_models(cfg):
     return models
 
 
-def main():
-    p = argparse.ArgumentParser(description='Chainer implementation of waifu2x')
-    p.add_argument('--gpu', '-g', type=int, default=-1)
-    p.add_argument('--input', '-i', default='images/small.png')
-    p.add_argument('--output', '-o', default='./')
-    p.add_argument('--quality', '-q', type=int, default=None)
-    p.add_argument('--model_dir', '-d', default=None)
-    p.add_argument('--scale_ratio', '-s', type=float, default=2.0)
-    p.add_argument('--tta', '-t', action='store_true')
-    p.add_argument('--batch_size', '-b', type=int, default=16)
-    p.add_argument('--block_size', '-l', type=int, default=128)
-    p.add_argument('--extension', '-e', default='png',
-                   choices=['png', 'webp'])
-    p.add_argument('--arch', '-a', default='VGG7',
-                   choices=['VGG7', '0', 'UpConv7', '1', 'ResNet10', '2', 'UpResNet10', '3'])
-    p.add_argument('--method', '-m', default='scale',
-                   choices=['noise', 'scale', 'noise_scale'])
-    p.add_argument('--noise_level', '-n', type=int, default=1,
-                   choices=[0, 1, 2, 3])
-    p.add_argument('--color', '-c', default='rgb',
-                   choices=['y', 'rgb'])
-    p.add_argument('--tta_level', '-T', type=int, default=8,
-                   choices=[2, 4, 8])
-    g = p.add_mutually_exclusive_group()
-    g.add_argument('--width', '-W', type=int, default=0)
-    g.add_argument('--height', '-H', type=int, default=0)
-    g.add_argument('--shorter_side', '-S', type=int, default=0)
-    g.add_argument('--longer_side', '-L', type=int, default=0)
+def main(args):
+#     p = argparse.ArgumentParser(description='Chainer implementation of waifu2x')
+#     p.add_argument('--gpu', '-g', type=int, default=0)
+#     p.add_argument('--input', '-i', default='images/small.png')
+#     p.add_argument('--output', '-o', default='./')
+#     p.add_argument('--quality', '-q', type=int, default=None)
+#     p.add_argument('--model_dir', '-d', default=None)
+#     p.add_argument('--scale_ratio', '-s', type=float, default=2.0)
+#     p.add_argument('--tta', '-t', action='store_true')
+#     p.add_argument('--batch_size', '-b', type=int, default=16)
+#     p.add_argument('--block_size', '-l', type=int, default=128)
+#     p.add_argument('--extension', '-e', default='png',
+#                    choices=['png', 'webp'])
+#     p.add_argument('--arch', '-a', default='VGG7',
+#                    choices=['VGG7', '0', 'UpConv7', '1', 'ResNet10', '2', 'UpResNet10', '3'])
+#     p.add_argument('--method', '-m', default='scale',
+#                    choices=['noise', 'scale', 'noise_scale'])
+#     p.add_argument('--noise_level', '-n', type=int, default=1,
+#                    choices=[0, 1, 2, 3])
+#     p.add_argument('--color', '-c', default='rgb',
+#                    choices=['y', 'rgb'])
+#     p.add_argument('--tta_level', '-T', type=int, default=8,
+#                    choices=[2, 4, 8])
+#     g = p.add_mutually_exclusive_group()
+#     g.add_argument('--width', '-W', type=int, default=0)
+#     g.add_argument('--height', '-H', type=int, default=0)
+#     g.add_argument('--shorter_side', '-S', type=int, default=0)
+#     g.add_argument('--longer_side', '-L', type=int, default=0)
 
-    args = p.parse_args()
     if args.arch in srcnn.table:
         args.arch = srcnn.table[args.arch]
 
@@ -165,8 +164,8 @@ def main():
 
     outname = None
     outdir = args.output
-    if os.path.isdir(args.input):
-        filelist = utils.load_filelist(args.input)
+    if os.path.isdir(args.uinput):
+        filelist = utils.load_filelist(args.uinput)
     else:
         tmpname, tmpext = os.path.splitext(os.path.basename(args.output))
         if tmpext in output_exts:
@@ -176,7 +175,7 @@ def main():
             outdir = './' if outdir == '' else outdir
         elif tmpext != '':
             raise ValueError('Format {} is not supported'.format(tmpext))
-        filelist = [args.input]
+        filelist = [args.uinput]
 
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -219,7 +218,7 @@ def main():
                 if 'scale' in models:
                     outname += '(scale{:.1f}x)'.format(args.scale_ratio)
                     dst = upscale_image(args, dst, models['scale'])
-            print('Elapsed time: {:.6f} sec'.format(time.time() - start))
+            
 
             outname += '({}_{}){}'.format(args.arch, args.color, outext)
             if os.path.exists(outpath):
