@@ -1,4 +1,7 @@
-# waifu2x-chainer
+# waifu2x-chainer-OCR
+
+This is a Jupyter Notebook adaptation of waifu2x-chainer for integration into a OCR workflow. It includes a UpResNet10 model fine-tuned with NoisyOffice Dataset.
+GPU support is NOT enabled by default - change cfg.gpu to 0 to enable GPU.
 
 This is a Chainer implementation of waifu2x [[1]](https://github.com/nagadomi/waifu2x).
 Note that the training procedure of waifu2x-chainer may be slightly different from original waifu2x.
